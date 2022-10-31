@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 
 app.get("/", (req, res) => {
-    res.send(JSON.stringify(req));
+    res.send(req.toString());
 });
 
 app.listen(5000, () => {
