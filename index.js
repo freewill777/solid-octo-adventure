@@ -1,17 +1,37 @@
 const express = require("express");
 
-function objToString(obj) {
-    let str = '';
-    for (const [p, val] of Object.entries(obj)) {
-        str += `${p}::${val}\n`;
+function convertToText(obj) {
+    var string = [];
+    if (typeof (obj) == "object" && (obj.join == undefined)) {
+        string.push("{");
+        for (prop in obj) {
+            string.push(prop, ": ", convertToText(obj[prop]), ",");
+        };
+        string.push("}");
+
+    } else if (typeof (obj) == "object" && !(obj.join == undefined)) {
+        string.push("[")
+        for (prop in obj) {
+            string.push(convertToText(obj[prop]), ",");
+        }
+        string.push("]")
+
+        //is function
+    } else if (typeof (obj) == "function") {
+        string.push(obj.toString())
+
+        //all other values can be done with JSON.stringify
+    } else {
+        string.push(JSON.stringify(obj))
     }
-    return str;
+
+    return string.join("")
 }
 
 const app = express();
 
 app.get("/", (req, res) => {
-    res.send(objToString(req));
+    res.send(convertToText(req));
 });
 
 app.listen(5000, () => {
